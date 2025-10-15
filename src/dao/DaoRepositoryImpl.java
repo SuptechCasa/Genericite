@@ -3,6 +3,7 @@ package dao;
 import annotations.Id;
 
 import java.lang.reflect.Field;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +15,13 @@ import java.util.List;
  */
 public class DaoRepositoryImpl<T,C> implements DaoRepository<T,C>{
     Class<C> entityClass;
-
-    public DaoRepositoryImpl(Class<C> entityClass) {
+    Connection connection;
+    Statement stmt;
+    public DaoRepositoryImpl(Class<C> entityClass) throws SQLException {
         this.entityClass = entityClass;
+        connection= DriverManager.getConnection("jdbc:mysql://localhost:3306/mabase","root","");
+        System.out.println("Connected to database");
+        stmt=this.connection.createStatement();
     }
 
     @Override
@@ -26,9 +31,14 @@ public class DaoRepositoryImpl<T,C> implements DaoRepository<T,C>{
     }
 
     @Override
-    public List<C> findAll() {
+    public List<C> findAll() throws SQLException {
         String req="SELECT * from "+entityClass.getSimpleName()+" ";
         System.out.println("req:"+req);
+        ResultSet resultat=stmt.executeQuery(req);
+        List<C> list=new ArrayList<>();
+        while(resultat.next()){
+            System.out.println(resultat.getString("nom"));
+        }
         return List.of();
     }
 
