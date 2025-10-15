@@ -3,6 +3,7 @@ package dao;
 import annotations.Id;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +32,27 @@ public class DaoRepositoryImpl<T,C> implements DaoRepository<T,C>{
     }
 
     @Override
-    public List<C> findAll() throws SQLException {
+    public List<C> findAll() throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         String req="SELECT * from "+entityClass.getSimpleName()+" ";
-        System.out.println("req:"+req);
+
         ResultSet resultat=stmt.executeQuery(req);
+
+        ResultSetMetaData metaData=resultat.getMetaData();
+
+        int columnCount=metaData.getColumnCount();
+
+        C instance=entityClass.getDeclaredConstructor().newInstance();
+
         List<C> list=new ArrayList<>();
         while(resultat.next()){
             System.out.println(resultat.getString("nom"));
+            for(int i=1;i<=columnCount;i++){
+               String columnName = metaData.getColumnName(i);
+               String value = resultat.getString(i);
+               // instance.getClass().getDeclaredMethod(columnName,String.class).invoke(instance,value);
+            }
+
+
         }
         return List.of();
     }
