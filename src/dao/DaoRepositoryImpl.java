@@ -4,6 +4,7 @@ import annotations.Id;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,16 +46,14 @@ public class DaoRepositoryImpl<T,C> implements DaoRepository<T,C>{
 
         List<C> list=new ArrayList<>();
         while(resultat.next()){
-            System.out.println(resultat.getString("nom"));
             for(int i=1;i<=columnCount;i++){
                String columnName = metaData.getColumnName(i);
-               String value = resultat.getString(i);
-               // instance.getClass().getDeclaredMethod(columnName,String.class).invoke(instance,value);
+               Object value = resultat.getObject(i);
+               setProperty(columnName,instance,value);
             }
-
-
+            list.add(instance);
         }
-        return List.of();
+        return list;
     }
 
     @Override
@@ -97,5 +96,17 @@ public class DaoRepositoryImpl<T,C> implements DaoRepository<T,C>{
             }
         }
             return null;
+    }
+
+    public void setProperty(String columnName,C instance,Object value) throws InvocationTargetException, IllegalAccessException {
+        String methodName="set"+columnName.substring(0, 1).toUpperCase()+columnName.substring(1).toLowerCase();
+        System.out.println(methodName);
+        for (Method m : entityClass.getDeclaredMethods()) {
+            m.setAccessible(true);
+            if (m.getName().equals(methodName)) {
+                m.invoke(instance,value);
+            }
+        }
+
     }
 }
