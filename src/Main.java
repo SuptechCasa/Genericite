@@ -15,6 +15,6 @@ public class Main {
         for (Client client : clientDaoRepository.findAll()) {
             System.out.println(client);
         }
-        clientDaoRepository.save(new Client());
+        clientDaoRepository.save(new Client(4,"HAKIMI","Achraf","Rue 4","06786448","HAKIMI@gmail.com"));
     }
 }

@@ -12,7 +12,7 @@ public interface DaoRepository<T,C> {
      */
     public C findById(T id);
     public List<C> findAll() throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
-    public C save(C c);
+    public C save(C c) throws SQLException, InvocationTargetException, IllegalAccessException;
     public void delete(C c);
     public void deleteById(T id);
 }
