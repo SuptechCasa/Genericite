@@ -1,5 +1,7 @@
 package dao;
 
+import annotations.Id;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,5 +57,20 @@ public class DaoRepositoryImpl<T,C> implements DaoRepository<T,C>{
     @Override
     public void delete(C c) {
 
+    }
+
+    @Override
+    public void deleteById(T id) {
+        StringBuilder sql=new StringBuilder();
+        sql.append("DELETE FROM "+entityClass.getSimpleName()+" WHERE "+getId()+"="+id);
+    }
+
+    public String getId(){
+            for (Field declaredField : entityClass.getDeclaredFields()) {
+            if (declaredField.isAnnotationPresent(Id.class)) {
+                return declaredField.getName();
+            }
+        }
+            return null;
     }
 }

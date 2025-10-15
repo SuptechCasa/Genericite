@@ -12,5 +12,5 @@ public interface DaoRepository<T,C> {
     public List<C> findAll();
     public C save(C c);
     public void delete(C c);
-
+    public void deleteById(T id);
 }
